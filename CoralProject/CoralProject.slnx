@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Coral/Coral.csproj" />
+  <Project Path="CoralApplication/CoralApplication.csproj" />
+  <Project Path="CoralTests/CoralTests.csproj" />
+</Solution>
