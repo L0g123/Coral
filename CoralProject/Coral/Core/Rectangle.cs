@@ -9,5 +9,6 @@ namespace Coral.Core
         public Vector2i Position { get; set; } = pos;
         public Vector2i Size { get; set; } = size;
 
+        public Rectangle(int x, int y, int width, int height) : this(new Vector2i(x, y), new Vector2i(width, height)) { }
     }
 }

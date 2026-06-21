@@ -9,7 +9,7 @@ namespace Coral.Core
         public Vector2i Absolute { get; set; } = abs;
         public Vector2 Relative { get; set; } = rel;
 
-        public readonly Vector2i GetSize(Vector2i measure) => (Vector2i)(measure * Relative) + Absolute;
+        public readonly Vector2i Normalize(Vector2i measure) => (Vector2i)(measure * Relative) + Absolute;
 
         public LayoutUnit(int ax, int ay, float rx, float ry) : this(new(ax, ay), new(rx, ry)) { }
 

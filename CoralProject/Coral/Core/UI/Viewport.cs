@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Coral.Core.UI
 {
-    public class Viewport
+    public class Viewport(int width, int height)
     {
-        public Rectangle Bounds;
+        public Rectangle Bounds { get; } = new Rectangle(0, 0, width, height);
     }
 }

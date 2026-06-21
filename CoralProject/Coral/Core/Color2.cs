@@ -7,7 +7,7 @@ namespace Coral.Core
     /// <summary>
     /// Represents two colors simultaneously, labelled as a foreground and background colors
     /// </summary>
-    public struct Color2(Color? fg, Color? bg)
+    public struct Color2(Color? fg, Color? bg) : IEquatable<Color2>
     {
         public Color? Foreground { get; set; } = fg;
         public Color? Background { get; set; } = bg;
@@ -28,5 +28,10 @@ namespace Coral.Core
 
         public static Color2 FromBackground(Color bg) => new((0, 0, 0, 0), bg);
         public static Color2 FromForeground(Color fg) => new(fg, (0, 0, 0, 0));
+
+        public bool Equals(Color2 other)
+        {
+            return Foreground.Equals(other.Foreground) && Background.Equals(other.Background);
+        }
     }
 }

@@ -25,6 +25,8 @@ namespace Coral.Core
             }
         }
 
+        public SymbolBuffer(Vector2i size) : this(size.X, size.Y) { }
+
         public ConsoleSymbol this[int x, int y]
         {
             get => Grid[x, y];
@@ -51,6 +53,19 @@ namespace Coral.Core
                 for (int y = 0; y < Grid.GetLength(1); y++)
                 {
                     Grid[x, y] = symbol;
+                }
+            }
+        }
+
+        public void BlitTo(SymbolBuffer symbolBuffer) => BlitTo(symbolBuffer, new Vector2i(0, 0));
+
+        public void BlitTo(SymbolBuffer symbolBuffer, Vector2i position)
+        {
+            for (int x = 0; x < Math.Min(Width, symbolBuffer.Width - position.X); x++)
+            {
+                for (int y = 0; y < Math.Min(Height, symbolBuffer.Height - position.Y); y++)
+                {
+                    symbolBuffer[x + position.X, y + position.Y] = Grid[x, y];
                 }
             }
         }
