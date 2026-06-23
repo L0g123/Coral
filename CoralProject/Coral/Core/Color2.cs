@@ -12,6 +12,8 @@ namespace Coral.Core
         public Color? Foreground { get; set; } = fg;
         public Color? Background { get; set; } = bg;
 
+        public Color2() : this((0, 0, 0), (0, 0, 0)) { }
+
         public override string ToString()
         {
             string result = string.Empty;
@@ -32,6 +34,21 @@ namespace Coral.Core
         public bool Equals(Color2 other)
         {
             return Foreground.Equals(other.Foreground) && Background.Equals(other.Background);
+        }
+
+        public static Color2 operator +(Color2 left, Color2 right)
+        {
+            Color? fg =
+                left.Foreground is null ? right.Foreground :
+                right.Foreground is null ? left.Foreground :
+                left.Foreground.Value + right.Foreground.Value;
+
+            Color? bg =
+                left.Background is null ? right.Background :
+                right.Background is null ? left.Background :
+                left.Background.Value + right.Background.Value;
+
+            return new(fg, bg);
         }
     }
 }

@@ -94,9 +94,19 @@ namespace Coral.Core.UI
             foreach (var child in Children)
             {
                 child.Render();
-                child.RenderBuffer.BlitTo(RenderBuffer);
+                child.RenderBuffer.BlitTo(RenderBuffer, child.AbsolutePosition);
+            }
+        }
+
+        public void AddChild(Control child)
+        {
+            if(child.Parent != null)
+            {
+                throw new InvalidOperationException("Child control already has a parent");
             }
 
+            child.Parent = this;
+            Children.Add(child);
         }
     }
 }

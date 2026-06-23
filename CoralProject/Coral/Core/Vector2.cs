@@ -50,5 +50,7 @@ namespace Coral.Core
         }
 
         public static explicit operator Vector2i(Vector2 v) => new((int)v.X, (int)v.Y);
+
+        public override string ToString() => $"({X}, {Y})";
     }
 }

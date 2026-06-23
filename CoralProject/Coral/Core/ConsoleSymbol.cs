@@ -16,5 +16,11 @@ namespace Coral.Core
 
         public override string ToString() => $"{Color}{Character}";
 
+        public static ConsoleSymbol operator + (ConsoleSymbol left, ConsoleSymbol right)
+        {
+            var symbol = right.Color.Foreground!.Value.A == 0 ? left.Character : right.Character;
+            return new(left.Color + right.Color, symbol);
+        }
+
     }
 }

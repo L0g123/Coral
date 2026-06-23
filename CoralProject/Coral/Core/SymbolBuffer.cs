@@ -9,6 +9,8 @@ namespace Coral.Core
         public int Width { get; protected set; }
         public int Height { get; protected set; }
 
+        public Vector2i Size => new(Width, Height);
+
         protected ConsoleSymbol[,] Grid;
 
         public SymbolBuffer(int width, int height)
@@ -35,6 +37,7 @@ namespace Coral.Core
 
         public void FlushTo(TextWriter writer)
         {
+            Console.SetCursorPosition(0, 0);
             for (int x = 0; x < Grid.GetLength(0); x++)
             {
                 for (int y = 0; y < Grid.GetLength(1); y++)
@@ -65,9 +68,12 @@ namespace Coral.Core
             {
                 for (int y = 0; y < Math.Min(Height, symbolBuffer.Height - position.Y); y++)
                 {
-                    symbolBuffer[x + position.X, y + position.Y] = Grid[x, y];
+                    var result = symbolBuffer[x + position.X, y + position.Y] + Grid[x, y];
+                    symbolBuffer[x + position.X, y + position.Y] = result;
                 }
             }
         }
+
+        public void Clear() => Fill(new(new((0, 0, 0, 0), (0, 0, 0, 0))));
     }
 }
