@@ -18,7 +18,7 @@ namespace Coral.Core
 
         public static ConsoleSymbol operator + (ConsoleSymbol left, ConsoleSymbol right)
         {
-            var symbol = right.Color.Foreground!.Value.A == 0 ? left.Character : right.Character;
+            var symbol = right.Color.Foreground!.Value.A == 255 ? left.Character : right.Character;
             return new(left.Color + right.Color, symbol);
         }
 

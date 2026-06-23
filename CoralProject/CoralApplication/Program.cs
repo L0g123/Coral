@@ -16,12 +16,11 @@ namespace CoralApplication
                 FrameBrush = new SolidBrush(new(new((255, 0, 0), (255, 0, 0))))
             };
 
-            frame.AddChild(new Frame()
+            frame.AddChild(new Window("Hello, World!")
             {
-                Size = LayoutUnit.Full,
-                Position = new(0,0,.5f,.5f),
-                Origin = new Vector2(0, 0),
-                FrameBrush = new SolidBrush(new(new((0, 255, 0), (0, 0, 0)), 'c'))
+                Size = new(0, 0, .5f, .5f),
+                Position = new(0, 0, .5f, .5f),
+                Origin = new Vector2(.5f, .5f)
             });
 
             UIOrchestrator orchestrator = new(frame);

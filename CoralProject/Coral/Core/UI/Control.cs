@@ -85,7 +85,7 @@ namespace Coral.Core.UI
         public abstract void RenderControl();
 
         // Render the control and its children to the RenderBuffer
-        public void Render()
+        public virtual void Render()
         {
             if (!Visible) return;
 

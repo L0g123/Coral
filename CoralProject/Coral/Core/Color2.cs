@@ -13,6 +13,7 @@ namespace Coral.Core
         public Color? Background { get; set; } = bg;
 
         public Color2() : this((0, 0, 0), (0, 0, 0)) { }
+        public Color2(Color col) : this(col, col) { }
 
         public override string ToString()
         {
@@ -28,8 +29,8 @@ namespace Coral.Core
         public readonly Color2 AsBackground => new((0, 0, 0, 0), Background!.Value);
         public readonly Color2 AsForeground => new(Foreground!.Value, (0, 0, 0, 0));
 
-        public static Color2 FromBackground(Color bg) => new((0, 0, 0, 0), bg);
-        public static Color2 FromForeground(Color fg) => new(fg, (0, 0, 0, 0));
+        public static Color2 FromBackground(Color bg) => new((0, 0, 0, 255), bg);
+        public static Color2 FromForeground(Color fg) => new(fg, (0, 0, 0, 255));
 
         public bool Equals(Color2 other)
         {
@@ -50,5 +51,7 @@ namespace Coral.Core
 
             return new(fg, bg);
         }
+
+        public static Color2 Transparent => new((0, 0, 0, 255), (0, 0, 0, 255));
     }
 }

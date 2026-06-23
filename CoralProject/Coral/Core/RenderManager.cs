@@ -43,44 +43,6 @@ namespace Coral.Core
             return delta;
         }
 
-        protected static List<(ConsoleSymbol symbol, Vector2i pos, int count)> CompressDelta(
-            List<(Vector2i pos, ConsoleSymbol symbol)> delta,
-            int bufferWidth
-         )
-        {
-            var result = new List<(ConsoleSymbol symbol, Vector2i pos, int count)>();
-            if (delta.Count == 0) return result;
-
-
-            ConsoleSymbol spanSymbol = delta[0].symbol;
-            Vector2i spanStart = delta[0].pos;
-            int spanLinear = spanStart.Y * bufferWidth + spanStart.X;
-            int spanCount = 1;
-
-            for (int i = 1; i < delta.Count; i++)
-            {
-                Vector2i pos = delta[i].pos;
-                ConsoleSymbol symbol = delta[i].symbol;
-                int linear = pos.Y * bufferWidth + pos.X;
-
-                if (linear == spanLinear + spanCount && spanSymbol.Color.Equals(symbol.Color))
-                {
-                    spanCount++;
-                }
-                else
-                {
-                    result.Add((spanSymbol, spanStart, spanCount));
-                    spanSymbol = symbol;
-                    spanStart = pos;
-                    spanLinear = linear;
-                    spanCount = 1;
-                }
-            }
-
-            result.Add((spanSymbol, spanStart, spanCount));
-            return result;
-        }
-
         public void Update()
         {
             BackBuffer?.Clear();
@@ -106,16 +68,23 @@ namespace Coral.Core
 
         public void RenderToConsole()
         {
-            var deltaSpans = CompressDelta(GetBufferDelta(BackBuffer, FrontBuffer), BackBuffer.Size.X);
-            foreach (var (symbol, pos, count) in deltaSpans)
+            var delta = GetBufferDelta(BackBuffer, FrontBuffer);
+
+            /*
+             * Rendering via delta requires three payloads to console (cursor X, cursor Y, data)
+             * Hence, we use a heuristic to determine when its better to just flush the entire
+             * buffer sequentially
+             */
+            if(delta.Count * 1.5f > FrontBuffer.Width * FrontBuffer.Height)
             {
-                Console.SetCursorPosition(pos.X, pos.Y);
-                StringBuilder str = new();
-                for (int _ = 0; _ < count; _++)
+                FrontBuffer.FlushToConsole();
+            } else
+            {
+                foreach(var (pos, sym) in delta)
                 {
-                    str.Append(symbol.ToString());
+                    Console.SetCursorPosition(pos.X, pos.Y);
+                    Console.Write(sym.ToString());
                 }
-                Console.Write(str.ToString());
             }
         }
     }
