@@ -47,9 +47,9 @@ namespace Coral.Core
         public void FlushToConsole()
         {
             StringBuilder strb = new();
-            for(int y = 0; y < Grid.GetLength(1); y++)
+            for(int y = 0; y < Height; y++)
             {
-                for(int x = 0;  x < Grid.GetLength(0); x++ )
+                for(int x = 0;  x < Width; x++ )
                 {
                     strb.Append(Grid[x, y].ToString());
                 }
