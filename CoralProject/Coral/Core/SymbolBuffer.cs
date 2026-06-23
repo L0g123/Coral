@@ -38,9 +38,9 @@ namespace Coral.Core
         public void FlushTo(TextWriter writer)
         {
             Console.SetCursorPosition(0, 0);
-            for (int x = 0; x < Grid.GetLength(0); x++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int y = 0; y < Grid.GetLength(1); y++)
+                for (int x = 0; x < Width; x++)
                 {
                     writer.Write(Grid[x, y]);
                 }
