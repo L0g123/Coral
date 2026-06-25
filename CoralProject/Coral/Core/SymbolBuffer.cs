@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Coral.Core
 {
+
     public class SymbolBuffer
     {
         public int Width { get; protected set; }
