@@ -9,19 +9,18 @@ namespace Coral.Core.UI
     /// </summary>
     public abstract class Control
     {
-        protected Control(Viewport vp)
+        protected Control()
         {
-            RootViewport = vp;
-
             Name = $"<{GetType().Name}>";
             Position = LayoutUnit.Zero;
             Size = LayoutUnit.Full;
             Origin = Vector2.Zero;
             Visible = true;
+            //RenderBuffer = new(SymbolSize);
         }
 
         // Root viewport used for relative positioning when there are no parent controls
-        public Viewport RootViewport;
+        public Viewport RootViewport { get; set; }
 
         public int ID { get; private set; }
         public string Name { get; set; } = string.Empty;
@@ -34,7 +33,7 @@ namespace Coral.Core.UI
         {
             get
             {
-                var size = PixelSize;
+                var size = SymbolSize;
                 var pos = AbsolutePosition;
                 return new(new((int)pos.X, (int)pos.Y), new((int)size.X, (int)size.Y));
             }
@@ -42,19 +41,20 @@ namespace Coral.Core.UI
 
         // Hierarchy
         public Control? Parent;
-        public readonly List<Control> Children;
+        public readonly List<Control> Children = [];
 
         // Renering
         public bool Visible { get; set; } = true;
+        public SymbolBuffer RenderBuffer { get; protected set; }
 
-        protected Vector2i GetParentSize() => Parent?.PixelSize ?? RootViewport.Bounds.Size;
-        public Vector2i PixelSize => Size.GetSize(GetParentSize());
+        protected Vector2i GetParentSize() => Parent?.SymbolSize ?? RootViewport.Bounds.Size;
+        public Vector2i SymbolSize => Size.Normalize(GetParentSize());
 
-        // PixelPosition is relative to the parent's PixelPosition
-        public Vector2i PixelPosition => (Vector2i)(Position.GetSize(GetParentSize()) - PixelSize * Origin);
+        // SymbolPosition is relative to the parent's SymbolPosition
+        public Vector2i SymbolPosition => (Vector2i)(Position.Normalize(GetParentSize()) - SymbolSize * Origin);
 
-        // AbsolutePosition is relative to the RootViewport
-        public Vector2i AbsolutePosition => (Parent?.AbsolutePosition ?? Vector2.Zero) + PixelPosition;
+        // SymbolPosition is relative to the RootViewport
+        public Vector2i AbsolutePosition => (Parent?.AbsolutePosition ?? Vector2.Zero) + SymbolPosition;
 
         public Control GetRoot()
         {
@@ -72,6 +72,41 @@ namespace Coral.Core.UI
                 if (r != null) return r;
             }
             return null;
+        }
+
+        protected void RegenerateRenderBuffer()
+        {
+            RenderBuffer = new(SymbolSize);
+        }
+
+        public override string ToString() => Name;
+
+        // Render only the control itself, not its children
+        public abstract void RenderControl();
+
+        // Render the control and its children to the RenderBuffer
+        public virtual void Render()
+        {
+            if (!Visible) return;
+
+            RegenerateRenderBuffer();
+            RenderControl();
+            foreach (var child in Children)
+            {
+                child.Render();
+                child.RenderBuffer.BlitTo(RenderBuffer, child.AbsolutePosition);
+            }
+        }
+
+        public void AddChild(Control child)
+        {
+            if(child.Parent != null)
+            {
+                throw new InvalidOperationException("Child control already has a parent");
+            }
+
+            child.Parent = this;
+            Children.Add(child);
         }
     }
 }

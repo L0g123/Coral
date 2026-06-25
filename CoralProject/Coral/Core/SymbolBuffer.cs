@@ -9,6 +9,8 @@ namespace Coral.Core
         public int Width { get; protected set; }
         public int Height { get; protected set; }
 
+        public Vector2i Size => new(Width, Height);
+
         protected ConsoleSymbol[,] Grid;
 
         public SymbolBuffer(int width, int height)
@@ -25,23 +27,34 @@ namespace Coral.Core
             }
         }
 
+        public void AddText(string text, Color2 color, Vector2i pos)
+        {
+            for(int i = 0; i < text.Length; i++)
+            {
+                var prev = Grid[Math.Min(pos.X + i, Grid.GetLength(0)), pos.Y];
+                Grid[Math.Min(pos.X + i, Grid.GetLength(0)), pos.Y] += new ConsoleSymbol(color, text[i]);
+            }
+        }
+
+        public SymbolBuffer(Vector2i size) : this(size.X, size.Y) { }
+
         public ConsoleSymbol this[int x, int y]
         {
             get => Grid[x, y];
             set => Grid[x, y] = value;
         }
 
-        public void FlushTo(TextWriter writer)
+        public void FlushToConsole()
         {
-            for (int x = 0; x < Grid.GetLength(0); x++)
+            StringBuilder strb = new();
+            for(int y = 0; y < Height; y++)
             {
-                for (int y = 0; y < Grid.GetLength(1); y++)
+                for(int x = 0;  x < Width; x++ )
                 {
-                    writer.Write(Grid[x, y]);
+                    strb.Append(Grid[x, y].ToString());
                 }
-                writer.WriteLine();
             }
-            writer.Flush();
+            Console.Write(strb.ToString());
         }
 
         public void Fill(ConsoleSymbol symbol)
@@ -54,5 +67,21 @@ namespace Coral.Core
                 }
             }
         }
+
+        public void BlitTo(SymbolBuffer symbolBuffer) => BlitTo(symbolBuffer, new Vector2i(0, 0));
+
+        public void BlitTo(SymbolBuffer symbolBuffer, Vector2i position)
+        {
+            for (int x = 0; x < Math.Min(Width, symbolBuffer.Width - position.X); x++)
+            {
+                for (int y = 0; y < Math.Min(Height, symbolBuffer.Height - position.Y); y++)
+                {
+                    var result = symbolBuffer[x + position.X, y + position.Y] + Grid[x, y];
+                    symbolBuffer[x + position.X, y + position.Y] = result;
+                }
+            }
+        }
+
+        public void Clear() => Fill(new(new((0, 0, 0, 255), (0, 0, 0, 255))));
     }
 }

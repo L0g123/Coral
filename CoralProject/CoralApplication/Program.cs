@@ -1,4 +1,6 @@
 ﻿using Coral.Core;
+using Coral.Core.UI;
+using Coral.Core.UI.Controls;
 
 namespace CoralApplication
 {
@@ -6,10 +8,31 @@ namespace CoralApplication
     {
         static void Main(string[] args)
         {
-            SymbolBuffer buffer = new(10, 10);
-            buffer.Fill(new(new(null, (0, 255, 0)), 'c'));
+            var frame = new Frame()
+            {
+                Size = LayoutUnit.Full,
+                Position = LayoutUnit.Zero,
+                Origin = new Vector2(0, 0),
+                FrameBrush = new SolidBrush(new(new((255, 0, 0), (255, 0, 0))))
+            };
 
-            buffer.FlushTo(Console.Out);
+            frame.AddChild(new Window("Hello, World!")
+            {
+                Size = new(0, 0, .5f, .5f),
+                Position = new(0, 0, .5f, .5f),
+                Origin = new Vector2(.5f, .5f)
+            });
+
+            UIOrchestrator orchestrator = new(frame);
+            var manager = new RenderManager(Viewport.ConsoleViewport);
+            manager.RenderSources.Add(orchestrator);
+
+            while(true)
+            {
+                manager.Update();
+                manager.RenderToConsole();
+                
+            }
         }
     }
 }
