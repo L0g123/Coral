@@ -8,7 +8,7 @@ namespace Coral.Core.UI.Controls
     {
         public Brush WindowBrush { get; set; } = brush ?? new BoxBorderBrush(Color2.FromForeground((255,255,255)));
         public string WindowTitle { get; set; } = title;
-        public Color TextColor { get; set; } = (255, 255, 255);
+        public Color TitleColor { get; set; } = (255, 255, 255);
 
         public override void RenderControl()
         {
@@ -17,14 +17,15 @@ namespace Coral.Core.UI.Controls
             {
                 for (int x = 0; x < RenderBuffer.Width; x++)
                 {
-                    RenderBuffer[x, y] += WindowBrush.GetSymbol(new(x, y), RenderBuffer.Size);
+                    if(x == 0 || y == 0 || x == RenderBuffer.Width - 1 || y == RenderBuffer.Height - 1)
+                        RenderBuffer[x, y] += WindowBrush.GetSymbol(new(x, y), RenderBuffer.Size);
                 }
             }
 
             if (WindowTitle != string.Empty)
             {
                 var title = Util.Ellipsis(WindowTitle, (int)(SymbolSize.X / 2f));
-                var textcolor = new Color2(TextColor, (0, 0, 0, 255));
+                var textcolor = new Color2(TitleColor, (0, 0, 0, 255));
                 RenderBuffer.AddText(title, textcolor, new(1, 0));
             }
             

@@ -53,5 +53,7 @@ namespace Coral.Core
         }
 
         public static Color2 Transparent => new((0, 0, 0, 255), (0, 0, 0, 255));
+        public static Color2 WhiteOnBlack => new((255, 255, 255), (0, 0, 0));
+        public static Color2 WhiteOnTransparent => new((255, 255, 255), (0, 0, 0, 255));
     }
 }

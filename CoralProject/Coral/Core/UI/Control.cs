@@ -73,7 +73,9 @@ namespace Coral.Core.UI
             }
             return null;
         }
-
+        public Control? Find(string name) => Find(c => c.Name == name);
+        public T? Find<T>(Predicate<Control> f) where T : Control => Find(f) as T;
+        public T? Find<T>(string name) where T : Control => Find(name) as T;
         protected void RegenerateRenderBuffer()
         {
             RenderBuffer = new(SymbolSize);

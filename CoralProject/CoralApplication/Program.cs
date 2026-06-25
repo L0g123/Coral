@@ -16,12 +16,16 @@ namespace CoralApplication
                 FrameBrush = new SolidBrush(new(new((255, 0, 0), (255, 0, 0))))
             };
 
-            frame.AddChild(new Window("Hello, World!")
+            frame.AddChild(new SubConsole()
             {
                 Size = new(0, 0, .5f, .5f),
                 Position = new(0, 0, .5f, .5f),
-                Origin = new Vector2(.5f, .5f)
+                Origin = new Vector2(.5f, .5f),
+                Name = "bob",
             });
+
+            frame.Find<SubConsole>("bob")!.Out.WriteLine("hello");
+            frame.Find<SubConsole>("bob")!.Out.WriteLine("world");
 
             UIOrchestrator orchestrator = new(frame);
             var manager = new RenderManager(Viewport.ConsoleViewport);
