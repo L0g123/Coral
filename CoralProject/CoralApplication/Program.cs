@@ -19,40 +19,22 @@ namespace CoralApplication
                 FrameBrush = new SolidBrush(new(new((255, 0, 0), (255, 0, 0))))
             };
 
-            frame.AddChild(new SubConsole()
+            frame.AddChild(new Button("im a button")
             {
-                Size = new(0, 0, .5f, .5f),
+                Size = new(25, 5, 0, 0),
                 Position = new(0, 0, .5f, .5f),
                 Origin = new Vector2(.5f, .5f),
                 Name = "bob",
+                FrameBrush = new BoxBorderBrush(Color2.WhiteOnTransparent)
             });
+
+            frame.Find<Button>("bob")!.Clicked += () => { frame.Find<Button>("bob")!.ButtonText = "clicked"; };
 
             // create UI orchestrator and add it to RenderManager
 
             UIOrchestrator orchestrator = new(frame);
             var manager = new RenderManager(Viewport.ConsoleViewport);
             manager.RenderSources.Add(orchestrator);
-
-            // Create input handler
-            var ihandler = InputReaderFactory.Create();
-            var vconsole = frame.Find<SubConsole>("bob")!;
-            ihandler.EventReceived += e =>
-            {
-                switch (e)
-                {
-                    case InputEvent.Mouse { Value: var m }:
-                        vconsole.Out.WriteLine($"[Mouse] {m.Kind} {m.Button} @ ({m.Col}, {m.Row}) [{m.Modifiers}]");
-                        break;
-
-                    case InputEvent.Key { Value: var k } when k.IsDown:
-                        vconsole.Out.WriteLine($"[Key]   {k.Key} '{k.Character}' [{k.Modifiers}]");
-                        break;
-
-                    case InputEvent.Resize { Value: var r }:
-                        vconsole.Out.WriteLine($"[Resize] {r.Width}x{r.Height}");
-                        break;
-                }
-            };
 
             while(true)
             {

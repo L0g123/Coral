@@ -48,6 +48,8 @@ namespace Coral.Core
             BackBuffer?.Clear();
             foreach(var source in RenderSources)
             {
+                source.Update();
+
                 var buf = source.GetOutputBuffer();
 
                 if(BackBuffer == null)

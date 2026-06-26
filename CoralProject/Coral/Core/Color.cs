@@ -32,5 +32,15 @@ namespace Coral.Core
                 MathCoral.Lerp(left.A, right.A, t)
                 );
         }
+
+        public static Color operator * (Color left, float right)
+        {
+            return ((int)(left.R * right), (int)(left.G * right), (int)(left.B * right), left.A);
+        }
+
+        public static Color operator /(Color left, float right)
+        {
+            return ((int)(left.R / right), (int)(left.G / right), (int)(left.B / right), left.A);
+        }
     }
 }

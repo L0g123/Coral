@@ -100,6 +100,11 @@ namespace Coral.Core.UI
             }
         }
 
+        public virtual void Update()
+        {
+            foreach (var child in Children) child.Update();
+        }
+
         public void AddChild(Control child)
         {
             if(child.Parent != null)

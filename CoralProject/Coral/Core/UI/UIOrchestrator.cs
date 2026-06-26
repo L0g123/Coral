@@ -35,6 +35,9 @@ namespace Coral.Core.UI
             return Buffer;
         }
 
-        public void Update() { }
+        public void Update()
+        {
+            Root.Update();
+        }
     }
 }

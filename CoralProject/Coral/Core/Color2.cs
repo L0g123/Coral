@@ -52,6 +52,15 @@ namespace Coral.Core
             return new(fg, bg);
         }
 
+        public static Color2 operator * (Color2 left, float right)
+        {
+            return new(left.Foreground * right, left.Background * right);
+        }
+        public static Color2 operator /(Color2 left, float right)
+        {
+            return new(left.Foreground / right, left.Background / right);
+        }
+
         public static Color2 Transparent => new((0, 0, 0, 255), (0, 0, 0, 255));
         public static Color2 WhiteOnBlack => new((255, 255, 255), (0, 0, 0));
         public static Color2 WhiteOnTransparent => new((255, 255, 255), (0, 0, 0, 255));
