@@ -42,7 +42,7 @@ namespace Coral.Core.UI.Controls
 
         public override void RenderControl()
         {
-            var maxTextLength = SymbolSize.Y - 2;
+            var maxTextLength = SymbolSize.X - 2;
 
             base.RenderControl(); // render basic window
             Vector2i targetPos = SymbolSize * new Vector2i(0, 1) + new Vector2i(1, -2);
