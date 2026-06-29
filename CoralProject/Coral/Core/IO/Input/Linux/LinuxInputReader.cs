@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Coral.Core.IO.Input.Unix
+namespace Coral.Core.IO.Input.Linux
 {
-    public class UnixInputReader : IDisposable, IInputReader
+    public class LinuxInputReader : IDisposable, IInputReader
     {
         private readonly IntPtr _stdin = new IntPtr(0); // STDIN_FILENO = 0
         private termios _originalTermios;
@@ -15,7 +15,7 @@ namespace Coral.Core.IO.Input.Unix
 
         public event Action<InputEvent> EventReceived = _ => { };
 
-        public UnixInputReader()
+        public LinuxInputReader()
         {
             if (!IsTTY())
                 throw new InvalidOperationException("Not running in a terminal!");
@@ -60,14 +60,16 @@ namespace Coral.Core.IO.Input.Unix
 
         private void ReadLoop()
         {
-            var buffer = new byte[512];
-            var pending = new List<byte>();
+            var readBuffer = new byte[512];
+            var pending = new byte[1024];
+            int pendingStart = 0;
+            int pendingEnd = 0;
 
             while (!_cts.IsCancellationRequested)
             {
                 try
                 {
-                    int bytesRead = read(_stdin, buffer, (uint)buffer.Length);
+                    int bytesRead = read(_stdin, readBuffer, (uint)readBuffer.Length);
                     if (bytesRead <= 0)
                     {
                         if (bytesRead < 0)
@@ -78,12 +80,20 @@ namespace Coral.Core.IO.Input.Unix
                         continue;
                     }
 
-                    pending.AddRange(new ReadOnlySpan<byte>(buffer, 0, bytesRead).ToArray());
+                    // If the buffer overflows, shift the data to the beginning
+                    if (pendingEnd + bytesRead > pending.Length)
+                    {
+                        ShiftPending(pending, ref pendingStart, ref pendingEnd);
+                    }
+
+                    Buffer.BlockCopy(readBuffer, 0, pending, pendingEnd, bytesRead);
+                    pendingEnd += bytesRead;
 
                     int offset = 0;
-                    while (offset < pending.Count)
+                    int currentLength = pendingEnd - pendingStart;
+                    while (offset < currentLength)
                     {
-                        var remaining = new ReadOnlySpan<byte>(pending.ToArray(), offset, pending.Count - offset);
+                        var remaining = new ReadOnlySpan<byte>(pending, pendingStart + offset, currentLength - offset);
                         int consumed = 0;
                         InputEvent? evt = null;
 
@@ -100,7 +110,7 @@ namespace Coral.Core.IO.Input.Unix
                                         (b >= (byte)'a' && b <= (byte)'z'))
                                     {
                                         var seq = remaining.Slice(0, i + 1);
-                                        evt = UnixInputConverter.Convert(seq);
+                                        evt = LinuxInputConverter.Convert(seq);
                                         consumed = seq.Length;
                                         break;
                                     }
@@ -109,7 +119,7 @@ namespace Coral.Core.IO.Input.Unix
                             else
                             {
                                 // Plain byte (including Ctrl keys)
-                                evt = UnixInputConverter.Convert(remaining.Slice(0, 1));
+                                evt = LinuxInputConverter.Convert(remaining.Slice(0, 1));
                                 consumed = 1;
                             }
                         }
@@ -126,14 +136,35 @@ namespace Coral.Core.IO.Input.Unix
                         }
                     }
 
-                    if (offset > 0)
-                        pending.RemoveRange(0, offset);
+                    pendingStart += offset;
+
+                    if (pendingStart == pendingEnd)
+                    {
+                        pendingStart = 0;
+                        pendingEnd = 0;
+                    }
+
+                    else if (pendingStart > pending.Length / 2)
+                    {
+                        ShiftPending(pending, ref pendingStart, ref pendingEnd);
+                    }
                 }
                 catch
                 {
                     break;
                 }
             }
+        }
+
+        private void ShiftPending(byte[] buffer, ref int start, ref int end)
+        {
+            int count = end - start;
+            if (count > 0)
+            {
+                Buffer.BlockCopy(buffer, start, buffer, 0, count);
+            }
+            start = 0;
+            end = count;
         }
 
         public void Dispose()
