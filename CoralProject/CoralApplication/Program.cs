@@ -16,19 +16,17 @@ namespace CoralApplication
                 Size = LayoutUnit.Full,
                 Position = LayoutUnit.Zero,
                 Origin = new Vector2(0, 0),
-                FrameBrush = new SolidBrush(new(new((255, 0, 0), (255, 0, 0))))
+                FrameBrush = new SolidBrush(new(new((20, 20, 20), (20, 20, 20))))
             };
 
-            frame.AddChild(new Button("im a button")
+            frame.AddChild(new Window("draggable window")
             {
-                Size = new(25, 5, 0, 0),
+                Size = new(0, 0, .5f, .5f),
                 Position = new(0, 0, .5f, .5f),
                 Origin = new Vector2(.5f, .5f),
                 Name = "bob",
-                FrameBrush = new BoxBorderBrush(Color2.WhiteOnTransparent)
+                Draggable = true
             });
-
-            frame.Find<Button>("bob")!.Clicked += () => { frame.Find<Button>("bob")!.ButtonText = "clicked"; };
 
             // create UI orchestrator and add it to RenderManager
 

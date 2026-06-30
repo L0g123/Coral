@@ -1,12 +1,14 @@
 ﻿namespace Coral.Core.IO.Input
 {
+
     public static class InputHandler
     {
         public static readonly IInputReader Input = InputReaderFactory.Create();
 
         public static Vector2i MousePosition { get; private set; } = Vector2i.Zero;
-        private static readonly Dictionary<ConsoleKey, bool> KeyboardState = [];
-        private static readonly Dictionary<MouseButton, bool> MouseState = new()
+        public static Vector2i MouseDelta { get; private set;  } = Vector2i.Zero;
+        public static readonly Dictionary<ConsoleKey, bool> KeyboardState = [];
+        public static readonly Dictionary<MouseButton, bool> MouseState = new()
         {
             {MouseButton.Left, false},
             {MouseButton.Right, false},
@@ -28,10 +30,20 @@
                 switch (@event)
                 {
                     case InputEvent.Mouse { Value: var v }:
-
-                        if (v.Kind == MouseEventKind.Press) MouseState[v.Button] = true;
-                        else if (v.Kind == MouseEventKind.Release) MouseState[v.Button] = false;
-                        else if (v.Kind == MouseEventKind.Move) MousePosition = new(v.Col, v.Row);
+                        if (v.Kind == MouseEventKind.Press)
+                        {
+                            MouseState[v.Button] = true;
+                        }
+                        else if (v.Kind == MouseEventKind.Release)
+                        {
+                            MouseState[v.Button] = false;
+                        }
+                        else if (v.Kind == MouseEventKind.Move)
+                        {
+                            var newPos = new Vector2i(v.Col, v.Row);
+                            MouseDelta = newPos - MousePosition;
+                            MousePosition = newPos;
+                        }
                         break;
 
                     case InputEvent.Key { Value: var v }:
@@ -39,7 +51,6 @@
                         break;
                 }
             };
-
         }
 
         public static bool IsKeyDown(ConsoleKey key) => KeyboardState[key];
