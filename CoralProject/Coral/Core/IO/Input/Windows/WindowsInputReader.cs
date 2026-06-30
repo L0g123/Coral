@@ -1,5 +1,8 @@
-﻿namespace Coral.Core.IO.Input.Windows
+﻿using System.Runtime.Versioning;
+
+namespace Coral.Core.IO.Input.Windows
 {
+    [SupportedOSPlatform("windows")]
     public class WindowsInputReader : IDisposable, IInputReader
     {
         private readonly IntPtr _handle;

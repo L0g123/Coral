@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using System.Text;
 
-namespace Coral.Core.IO.Input.Unix
+namespace Coral.Core.IO.Input.Linux
 {
-    public static class UnixInputConverter
+    [SupportedOSPlatform("linux")]
+    public static class LinuxInputConverter
     {
         // Entry point — takes a raw escape sequence or single byte, emits a unified event
         public static InputEvent? Convert(ReadOnlySpan<byte> raw)
