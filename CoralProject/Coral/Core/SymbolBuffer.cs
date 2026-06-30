@@ -42,7 +42,11 @@ namespace Coral.Core
         public ConsoleSymbol this[int x, int y]
         {
             get => Grid[x, y];
-            set => Grid[x, y] = value;
+            set
+            {
+                if (x < 0 || x >= Width || y < 0 || y >= Height) return;
+                Grid[x, y] = value;
+            }
         }
 
         public void FlushToConsole()
@@ -77,6 +81,9 @@ namespace Coral.Core
             {
                 for (int y = 0; y < Math.Min(Height, symbolBuffer.Height - position.Y); y++)
                 {
+                    if(x + position.X < 0 || y + position.Y < 0) continue;
+                    if(x < 0 || y < 0) continue;
+
                     var result = symbolBuffer[x + position.X, y + position.Y] + Grid[x, y];
                     symbolBuffer[x + position.X, y + position.Y] = result;
                 }
