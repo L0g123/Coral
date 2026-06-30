@@ -96,7 +96,7 @@ namespace Coral.Core.UI
             foreach (var child in Children)
             {
                 child.Render();
-                child.RenderBuffer.BlitTo(RenderBuffer, child.AbsolutePosition);
+                child.RenderBuffer.BlitTo(RenderBuffer, child.SymbolPosition);
             }
         }
 

@@ -16,16 +16,32 @@ namespace CoralApplication
                 Size = LayoutUnit.Full,
                 Position = LayoutUnit.Zero,
                 Origin = new Vector2(0, 0),
-                FrameBrush = new SolidBrush(new(new((20, 20, 20), (20, 20, 20))))
+                FrameBrush = new SolidBrush(new(new((20, 20, 20))))
             };
 
-            frame.AddChild(new Window("draggable window")
+            frame.AddChild(new ScrollWindow()
             {
                 Size = new(0, 0, .5f, .5f),
                 Position = new(0, 0, .5f, .5f),
                 Origin = new Vector2(.5f, .5f),
                 Name = "bob",
                 Draggable = true
+            });
+
+            frame.Find("bob")!.AddChild(new Frame()
+            {
+                Position = new(2, 5, 0, 0),
+                Size = new(5, 5, 0, 0),
+                Origin = new Vector2(0, 0),
+                FrameBrush = new SolidBrush(new(new((0, 255, 0))))
+            });
+
+            frame.Find("bob")!.AddChild(new Frame()
+            {
+                Position = new(2, 35, 0, 0),
+                Size = new(5, 5, 0, 0),
+                Origin = new Vector2(0, 0),
+                FrameBrush = new SolidBrush(new(new((0, 255, 0))))
             });
 
             // create UI orchestrator and add it to RenderManager
