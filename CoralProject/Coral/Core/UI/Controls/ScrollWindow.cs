@@ -7,6 +7,8 @@ namespace Coral.Core.UI.Controls
 {
     public class ScrollWindow : Window
     {
+        public bool Hovered { get; protected set; }
+
         protected int ScrollOffset
         {
             get;
@@ -52,7 +54,7 @@ namespace Coral.Core.UI.Controls
         {
             InputHandler.Input.EventReceived += @event =>
             {
-                if (@event is InputEvent.Mouse { Value: var ev })
+                if (@event is InputEvent.Mouse { Value: var ev } && Hovered)
                 {
                     switch (ev.Kind)
                     {
@@ -65,6 +67,12 @@ namespace Coral.Core.UI.Controls
                     }
                 }
             };
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            Hovered = Bounds.Contains(InputHandler.MousePosition);
         }
     }
 }
